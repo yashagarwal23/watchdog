@@ -244,7 +244,7 @@ def convert(process):
         "health": getbadIphealth(process.raddr.ip if process.raddr else 0)
     }
 
-@app.route('/getLogs')
+@app.route('/getLogs', methods=['POST'])
 def getLogs():
     log_file = open('watchdog\packets.log', 'r')
     logs = log_file.readlines()

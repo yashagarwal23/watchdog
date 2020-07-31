@@ -9,7 +9,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 packet_logger = logging.getLogger("packet_logger")
 
-log_file_name = "packets.log"
+log_file_name = "watchdog\packets.log"
 fmt = '%(message)s'
 handler = TimedRotatingFileHandler(log_file_name, when="midnight", interval=1)
 handler.suffix = "%Y%m%d"
@@ -46,4 +46,5 @@ def log_packet(packet):
         packet_logger.warning(json_string)
 
 def start_logger():
+    print("logger started")
     sniff(prn = log_packet)
