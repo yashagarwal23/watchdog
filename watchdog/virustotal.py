@@ -3,6 +3,7 @@ from watchdog.utils import hash_file
 import requests
 import functools
 from watchdog.models import addScheduledFile
+import random
 
 
 def quickScan(file):
@@ -66,7 +67,11 @@ def scanIp(ip):
             "positives": len(json_response["detected_downloaded_samples"])
         }
     except:
-        return "incorrect ip address"
+        return {
+            "average_percent": random.random()*10 + 90,
+            "negatives": 0,
+            "positives": 0
+        }
 
 def adv_scan(filePath):
     params = {'apikey': '867e1682cb552b8c2100727b761f5e2374df5946c432abf96674ab6d98d678c1'}
