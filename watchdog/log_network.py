@@ -11,8 +11,8 @@ packet_logger = logging.getLogger("packet_logger")
 
 log_file_name = "watchdog\logs\packets.log"
 fmt = '%(message)s'
-handler = TimedRotatingFileHandler(log_file_name, when="midnight", interval=1)
-handler.suffix = "%Y%m%d"
+handler = TimedRotatingFileHandler(log_file_name, when="H", interval=1)
+handler.suffix = "%Y-%m-%d_%H"
 packet_logger.addHandler(handler)
 packet_logger.setLevel(logging.DEBUG)
 

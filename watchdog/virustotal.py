@@ -6,7 +6,7 @@ from watchdog.models import addScheduledFile
 
 
 def quickScan(file):
-    params = {'apikey': 'b93c0b8303dce792601b675ad8cd05b4366b2841a9261115ad4ad6a88398d20d',
+    params = {'apikey': '867e1682cb552b8c2100727b761f5e2374df5946c432abf96674ab6d98d678c1',
               'resource': hash_file(file)}
     headers = {"Accept-Encoding": "gzip, deflate",
                "User-Agent": "gzip,  My Python requests library example client or username"}
@@ -34,7 +34,7 @@ def lookup_process(id):
 
 def scanIp(ip):
     url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
-    params = {'ip': str(ip), 'apikey': 'b93c0b8303dce792601b675ad8cd05b4366b2841a9261115ad4ad6a88398d20d'}
+    params = {'ip': str(ip), 'apikey': '867e1682cb552b8c2100727b761f5e2374df5946c432abf96674ab6d98d678c1'}
     response = requests.get(url, params=params)
     json_response = response.json()
     print(json_response)
@@ -63,7 +63,7 @@ def scanIp(ip):
     }
 
 def adv_scan(filePath):
-    params = {'apikey': 'b93c0b8303dce792601b675ad8cd05b4366b2841a9261115ad4ad6a88398d20d'}
+    params = {'apikey': '867e1682cb552b8c2100727b761f5e2374df5946c432abf96674ab6d98d678c1'}
     files = {'file': (filePath.split('/')[-1], open(filePath, 'rb'))}
     response = requests.post('https://www.virustotal.com/vtapi/v2/file/scan', files=files, params=params)
     try:
