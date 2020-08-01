@@ -13,11 +13,6 @@ from watchdog.models import getbadIphealth
 
 count = 0
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
-
-
 @app.route('/getProcesses', methods=['GET', 'POST'])
 def getprocesses():
     if request.method == 'POST' and os.name == 'nt':
