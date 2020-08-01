@@ -11,8 +11,6 @@ import psutil
 from os.path import expanduser
 from watchdog.models import getbadIphealth
 
-count = 0
-
 @app.route('/')
 def hello_world():
     return 'Hello World!'
@@ -40,15 +38,11 @@ def getprocesses():
 @socketio.on("connect")
 def connect():
     print("connected")
-    global count
-    count += 1
 
 @socketio.on("disconnect")
 def disconnect():
     print("disconnected")
-    global count
-    count -= 1
-
+    
 @app.route("/getSystemUsage", methods=['POST'])
 def getSystemUsage():
     n_c = tuple(psutil.disk_io_counters())
@@ -67,8 +61,7 @@ def returnSystemUsage():
     print("thread started")
     global count
     while True:
-        if count > 0:
-            socketio.emit("system usage", getSystemUsage(), broadcast=True)
+        socketio.emit("system usage", getSystemUsage(), broadcast=True)
         time.sleep(1)
 
 @app.route('/getProcessUsage', methods=['POST'])
