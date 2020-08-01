@@ -9,11 +9,12 @@ from logging.handlers import TimedRotatingFileHandler
 
 packet_logger = logging.getLogger("packet_logger")
 
-log_file_name = "watchdog\packets.log"
+log_file_name = "watchdog\logs\packets.log"
 fmt = '%(message)s'
 handler = TimedRotatingFileHandler(log_file_name, when="midnight", interval=1)
 handler.suffix = "%Y%m%d"
 packet_logger.addHandler(handler)
+packet_logger.setLevel(logging.DEBUG)
 
 def getTcpData(tcp_packet):
     packet_dump = tcp_packet.show(dump=True)
@@ -43,7 +44,7 @@ def log_packet(packet):
         packet_dict.update(getTcpData(tcp))
         packet_dict["timestamp"] = str(datetime.fromtimestamp(time.time()))
         json_string = json.dumps(packet_dict)
-        packet_logger.warning(json_string)
+        packet_logger.info(json_string)
 
 def start_logger():
     print("logger started")

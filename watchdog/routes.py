@@ -246,7 +246,7 @@ def convert(process):
 
 @app.route('/getLogs', methods=['POST'])
 def getLogs():
-    log_file = open('watchdog\packets.log', 'r')
+    log_file = open('watchdog\logs\packets.log', 'r')
     logs = log_file.readlines()
     logs_json = [json.loads(log) for log in logs]
     log_file.close()
