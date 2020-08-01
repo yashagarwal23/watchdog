@@ -18,7 +18,7 @@ def getprocesses():
         result = list(map(convertforWindows, pids))
         return jsonify(
             {
-                "processes" : list(filter(lambda x: len(x['remoteAddr']), list(filter(lambda x : x != None, result))))
+                "processes" : list(filter(lambda x: len(x['remoteAddr']), list(filter(lambda x : x != None and x['PID'] != "None", result))))
             }
         )
     elif request.method == 'POST':
@@ -26,7 +26,7 @@ def getprocesses():
         result = list(map(convert, processes))
         return jsonify(
             {
-                "processes": list(filter(lambda x: len(x['remoteAddr']), result))
+                "processes": list(filter(lambda x: len(x['remoteAddr']), list(filter(lambda x : x != None and x['PID'] != "None", result))))
             }
         )
 
@@ -67,7 +67,7 @@ def getProcessUsageStats():
         process = psutil.Process(pid=pid)
         return jsonify(
             {
-                "cpu_uasage": process.cpu_percent(interval=2),
+                "cpu_usage": process.cpu_percent(interval=1)/psutil.cpu_count(),
                 "memory_usage": str(int(process.memory_info().rss) / ( 1024 * 1024 ))+ " MB" ,
                 # "disk_io_percent": [(100.0 * n_c[i + 1]) / (n_c[i] if n_c[i] != 0 else 1) for i in range(0, len(n_c) - 1, 2)],
                 # "network_io_percent": ""
@@ -80,7 +80,6 @@ def quickscan():
         return jsonify(
             {
                 "results":  lookup_process(request.form.get('PID'))
-
             }
         )
 

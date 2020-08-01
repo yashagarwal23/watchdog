@@ -33,34 +33,36 @@ def lookup_process(id):
     return list(map(lambda file: quickScan(file), list(open_files)))
 
 def scanIp(ip):
-    url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
-    params = {'ip': str(ip), 'apikey': '867e1682cb552b8c2100727b761f5e2374df5946c432abf96674ab6d98d678c1'}
-    response = requests.get(url, params=params)
-    json_response = response.json()
-    print(json_response)
-    if json_response.get("detected_downloaded_samples") is None:
+    try:
+        url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
+        params = {'ip': str(ip), 'apikey': '867e1682cb552b8c2100727b761f5e2374df5946c432abf96674ab6d98d678c1'}
+        response = requests.get(url, params=params)
+        json_response = response.json()
+        if json_response.get("detected_downloaded_samples") is None:
+            return {
+                "average_percent": 1 * 100,
+                "negatives": len(json_response["undetected_downloaded_samples"]),
+                "positives": 0
+            }
+        if len(json_response.get("detected_downloaded_samples")) == 0 and len(json_response.get("undetected_downloaded_samples")) == 0:
+            return {
+                "average_percent": 1 * 100,
+                "negatives": len(json_response["undetected_downloaded_samples"]),
+                "positives": len(json_response["detected_downloaded_samples"])
+            }
+        if len(json_response.get("detected_downloaded_samples")) == 0 and len(json_response.get("undetected_downloaded_samples")) == 0:
+            return {
+                "average_percent": 1 * 100,
+                "negatives": len(json_response["undetected_downloaded_samples"]),
+                "positives": len(json_response["detected_downloaded_samples"])
+            }
         return {
-            "average_percent": 1 * 100,
-            "negatives": len(json_response["undetected_downloaded_samples"]),
-            "positives": 0
-        }
-    if len(json_response.get("detected_downloaded_samples")) == 0 and len(json_response.get("undetected_downloaded_samples")) == 0:
-        return {
-            "average_percent": 1 * 100,
+            "average_percent": (len(json_response["detected_downloaded_samples"])/(len(json_response["detected_downloaded_samples"]) + len(json_response["undetected_downloaded_samples"]))) * 100,
             "negatives": len(json_response["undetected_downloaded_samples"]),
             "positives": len(json_response["detected_downloaded_samples"])
         }
-    if len(json_response.get("detected_downloaded_samples")) == 0 and len(json_response.get("undetected_downloaded_samples")) == 0:
-        return {
-            "average_percent": 1 * 100,
-            "negatives": len(json_response["undetected_downloaded_samples"]),
-            "positives": len(json_response["detected_downloaded_samples"])
-        }
-    return {
-        "average_percent": (len(json_response["detected_downloaded_samples"])/(len(json_response["detected_downloaded_samples"]) + len(json_response["undetected_downloaded_samples"]))) * 100,
-        "negatives": len(json_response["undetected_downloaded_samples"]),
-        "positives": len(json_response["detected_downloaded_samples"])
-    }
+    except:
+        return "incorrect ip address"
 
 def adv_scan(filePath):
     params = {'apikey': '867e1682cb552b8c2100727b761f5e2374df5946c432abf96674ab6d98d678c1'}
