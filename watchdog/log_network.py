@@ -5,16 +5,10 @@ import json
 import logging
 import time
 from datetime import datetime
-from logging.handlers import TimedRotatingFileHandler
+from elasticsearch import Elasticsearch 
+import socket
 
-packet_logger = logging.getLogger("packet_logger")
-
-log_file_name = "watchdog\logs\packets.log"
-fmt = '%(message)s'
-handler = TimedRotatingFileHandler(log_file_name, when="H", interval=1)
-handler.suffix = "%Y-%m-%d_%H"
-packet_logger.addHandler(handler)
-packet_logger.setLevel(logging.DEBUG)
+es=Elasticsearch([{'host':'52.152.170.162','port':9200}])
 
 def getTcpData(tcp_packet):
     packet_dump = tcp_packet.show(dump=True)
@@ -43,8 +37,8 @@ def log_packet(packet):
         packet_dict = getIpData(ip)
         packet_dict.update(getTcpData(tcp))
         packet_dict["timestamp"] = str(datetime.fromtimestamp(time.time()))
-        json_string = json.dumps(packet_dict)
-        packet_logger.info(json_string)
+        packet_dict["server"] = str(socket.gethostname())
+        res = es.index(index='logs',doc_type='logs',body=packet_dict)
 
 def start_logger():
     print("logger started")
