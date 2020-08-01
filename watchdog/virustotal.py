@@ -14,11 +14,15 @@ def quickScan(file):
         response = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params, headers=headers)
         json_response = response.json()
 
+        message = json_response.get('verbose_msg')
+        if not json_response.get('positives'):
+            message = adv_scan(file)
+
         return {
             'total scans': json_response.get('total'),
             'positives': json_response.get('positives'),
             'scan date': json_response.get('scan_date'),
-            'message': json_response.get('verbose_msg'),
+            'message': message,
             'file': file
         }
     except:
