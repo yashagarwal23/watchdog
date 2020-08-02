@@ -71,10 +71,6 @@ def fetchScanResults(path):
     f = open(expanduser(path), "r")
     contents = f.read()
     contents = contents.split('\n')
-    # print(list(map(lambda x: x, contents)))
-    # def filterer(x):
-    #     return x.includes(" : ")
-    # list(lambda y: y.split(" : "), contents)
     return list(map(lambda y:
                    {
                        "infection_name" : y.split(" : ")[0],

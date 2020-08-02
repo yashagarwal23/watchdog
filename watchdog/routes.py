@@ -42,13 +42,14 @@ def disconnect():
     
 @app.route("/getSystemUsage", methods=['POST'])
 def getSystemUsage():
+    cpu_usage = psutil.cpu_percent(interval=0.5, percpu=True)
     n_c = tuple(psutil.disk_io_counters())
     n_b = tuple(psutil.net_io_counters())
     return json.dumps(
         {
             "num_process": str(len(list(psutil.net_connections()))),
-            "cpu_usage": str(psutil.cpu_percent(interval=None, percpu=False)),
-            "memory_usage": str(dict(psutil.virtual_memory()._asdict())["percent"]),
+            "cpu_usage": str(sum(cpu_usage)/ len(cpu_usage)),
+            "memory_usage": str(psutil.virtual_memory().percent),
             "disk_io_percent": [(100.0*n_c[i+1]) / (n_c[i] if n_c[i] != 0 else 1) for i in range(0, len(n_c)-1, 2)],
             "network_io_percent": [(100.0*n_b[i+1]) / (n_b[i] if n_b[i] != 0 else 1) for i in range(0, len(n_b)-1, 2)]
         }
@@ -56,7 +57,6 @@ def getSystemUsage():
 
 def returnSystemUsage():
     print("thread started")
-    global count
     while True:
         socketio.emit("system usage", getSystemUsage(), broadcast=True)
         time.sleep(1)
@@ -88,16 +88,16 @@ def quickscan():
 
 @app.route('/blockIP', methods=['POST'])
 def block_ip():
-    if request.method == 'POST':
-        response = addToBlacklist(request.form.get('IP'), request.form.get('port') if request.form.get('port') != None else "*")
-        return response
+    if request.form.get('IP') == None:
+        return "IP not specified"
+    response = addToBlacklist(request.form.get('IP'), request.form.get('port') if request.form.get('port') != None else "*")
+    return response
 
 
 @app.route('/unblockIP', methods=['POST'])
 def unblock_ip():
-    if request.method == 'POST':
-        response = removeFromBlacklist(request.form.get('IP'), request.form.get('port') if request.form.get('port') != None else "*")
-        return response
+    response = removeFromBlacklist(request.form.get('IP'), request.form.get('port') if request.form.get('port') != None else "*")
+    return response
 
 
 @app.route('/getRules', methods=['POST'])
@@ -150,22 +150,21 @@ def quick_scan():
 
 @app.route('/killProcess', methods=['POST'])
 def killProcess():
-    if request.method == 'POST':
-        try:
-            pid = int(request.form.get('PID'))
-            process = psutil.Process(pid)
-            process.kill()
-            return "process terminated"
-        except:
-            return "some error occured. Are you sure you have sudo priviledge"
+    try:
+        pid = int(request.form.get('PID'))
+        process = psutil.Process(pid)
+        process.kill()
+        return "process terminated"
+    except:
+        return "some error occured. Make sure you have sudo priviledge"
 
 
 @app.route('/getchkrScanResults', methods=['POST'])
 def chkscan():
-    if request.method == 'POST':
-        return jsonify({
-            "results": fetchScanResults("~/chkrootkitLogs/fileLog.txt")
-        })
+    scan()
+    return jsonify({
+        "results": fetchScanResults("~/chkrootkitLogs/fileLog.txt")
+    })
 
 
 @app.route('/chkrScan', methods=['POST'])
@@ -250,11 +249,3 @@ def convert(process):
         'company': company,
         "health": getbadIphealth(process.raddr.ip if process.raddr else 0)
     }
-
-@app.route('/getLogs', methods=['POST'])
-def getLogs():
-    log_file = open('watchdog\logs\packets.log', 'r')
-    logs = log_file.readlines()
-    logs_json = [json.loads(log) for log in logs]
-    log_file.close()
-    return json.dumps(logs_json)
