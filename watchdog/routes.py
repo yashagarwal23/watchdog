@@ -10,6 +10,8 @@ from watchdog.models import addToBlacklist, removeFromBlacklist, getRules, getSc
 import psutil
 from os.path import expanduser
 from watchdog.models import getbadIphealth
+import pygal
+import pycountry
 
 @app.route('/getProcesses', methods=['GET', 'POST'])
 def getprocesses():
@@ -188,22 +190,40 @@ def getf():
                 "files": ans
             })
 
-@app.route('/getConnectedCountries', methods=['POST'])
+
 def countries():
-    if request.method == 'POST':
-        processes = psutil.net_connections()
-        s = {}
-        result = list(map(convert, processes))
-        for item in result:
-            if dict(item)["country"] == "" or dict(item)["country"] == "local address":
-                continue
-            s[
-               dict(item)["country"]] = len(list(filter(lambda x: x["country"] == item["country"], result)))
-        return jsonify(
-            {
-                "results": s
-            }
-        )
+    processes = psutil.net_connections()
+    s = {}
+    result = list(map(convert, processes))
+    for item in result:
+        if dict(item)["country"] == "" or dict(item)["country"] == "local address":
+            continue
+        s[dict(item)["country"]] = len(list(filter(lambda x: x["country"] == item["country"], result)))
+    return {
+            "results": s
+        }
+
+@app.route('/getConnectedCountries', methods=['POST'])
+def get_connected_countries():
+    return jsonify(countries())
+
+@app.route('/getCountryMap', methods=['POST'])
+def country_distribution():
+    countries_map = countries()
+    country_data = {}
+    for key, value in countries_map["results"].items():
+        if len(key.split(' ')) <= 4:
+            country_data[key] = value
+    print(country_data)
+    worldmap_chart = pygal.maps.world.World()
+    worldmap_chart.title = 'Countries connected'
+    for key in country_data:
+        country = key
+        occurence = country_data[str(key)]
+        if pycountry.countries.get(name=country) == None:
+            continue
+        worldmap_chart.add('{} {}'.format(country, occurence), [ str(pycountry.countries.get(name=country).alpha_2.lower()) ])
+    return worldmap_chart.render_response()
 
 def convert(process):
     country = ''
