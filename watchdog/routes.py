@@ -207,7 +207,7 @@ def countries():
 def get_connected_countries():
     return jsonify(countries())
 
-@app.route('/getCountryMap', methods=['POST'])
+@app.route('/getCountryMap', methods=['POST', 'GET'])
 def country_distribution():
     countries_map = countries()
     country_data = {}
