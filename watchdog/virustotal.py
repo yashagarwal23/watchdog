@@ -17,7 +17,7 @@ def quickScan(file):
 
         message = json_response.get('verbose_msg')
         if not json_response.get('positives'):
-            message = adv_scan(file)
+            message = adv_scan(file).get('message')
 
         return {
             'total scans': json_response.get('total'),
