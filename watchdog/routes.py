@@ -258,3 +258,10 @@ def getLogs():
     logs_json = [json.loads(log) for log in logs]
     log_file.close()
     return json.dumps(logs_json)
+
+@app.route('/pushSubscription', methods=['POST'])
+def pushSubscription():
+    if request.method == 'POST':
+        saveFile = open('pushSubscription', 'w')
+        saveFile.write(request.get_json(force=True)['endpoint'])
+    return jsonify({"result": True})
