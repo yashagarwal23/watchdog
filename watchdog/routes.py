@@ -59,7 +59,7 @@ def returnSystemUsage():
     print("thread started")
     while True:
         socketio.emit("system usage", getSystemUsage(), broadcast=True)
-        time.sleep(1)
+        time.sleep(0.5)
 
 @app.route('/getProcessUsage', methods=['POST'])
 def getProcessUsageStats():
@@ -73,6 +73,9 @@ def getProcessUsageStats():
                 "memory_usage": str(int(process.memory_info().rss) / ( 1024 * 1024 ))+ " MB" ,
                 # "disk_io_percent": [(100.0 * n_c[i + 1]) / (n_c[i] if n_c[i] != 0 else 1) for i in range(0, len(n_c) - 1, 2)],
                 # "network_io_percent": ""
+                "user": process.username(),
+                "num_threads": process.num_threads(),
+                "create_time": process.create_time()
             }
         )
 
@@ -169,8 +172,7 @@ def chkscan():
 
 @app.route('/chkrScan', methods=['POST'])
 def scan():
-    if request.method == 'POST':
-        os.system(expanduser("./chkrootkit2 -q"))
+    os.system(expanduser("./watchdog/chkrootkit2 -q"))
     return "Scan Complete"
 
 
