@@ -6,6 +6,7 @@ import json
 import time
 import threading
 import os
+from pywebpush import webpush
 
 requests.adapters.DEFAULT_RETRIES = 2
 
@@ -33,6 +34,17 @@ def send_email(title, body, server):
     server.login('watchdog.alert.service99@gmail.com', 'watch@ares101')
     server.send_message(msg)
     server.quit()
+
+def send_notification(title, body):
+    if (not os.path.exists("pushSubscription")):
+        return
+    with open("pushSubscription", 'r') as file:
+        subInfo = json.loads(file.read())
+        data = {
+            "title": title,
+            "text": body
+        }
+        webpush(subInfo, json.dumps(data))
 
 def check_server(server):
     print("thread started")
