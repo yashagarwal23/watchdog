@@ -5,12 +5,13 @@ import requests
 import json
 import time
 import threading
+import os
 
 requests.adapters.DEFAULT_RETRIES = 2
 
 alert_recipients = 'agarwal.yash.2304@gmail.com'
-server_shut_down_message = "server is shut down"
-server_anomaly_message = "cpu/ram usage on the server is higher than expected"
+server_shut_down_message = "server is down"
+server_anomaly_message = "cpu usage on the server is higher than optimal (90%)"
 
 response = requests.get("https://mock-beml-servers.netlify.app/servers.json")
 servers = response.json().get("servers")
@@ -34,14 +35,15 @@ def send_email(title, body, server):
     server.quit()
 
 def check_server(server):
+    print("thread started")
     server_ip = server['stats_socket']
     while True:
         try:
             server_system_usage = requests.post("http://"+server_ip+'/getSystemUsage').json()
             if float(server_system_usage['cpu_usage']) > cpu_usage_threshold:
                 send_email("High Server Usage", server_anomaly_message, server)
-            time.sleep(5)
-        except requests.exceptions.ConnectionError:
+            time.sleep(2)
+        except requests.ConnectionError:
             print("server down : ", server)
             send_email("Server Down", server_shut_down_message, server)
             exit(0)
