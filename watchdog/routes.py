@@ -249,3 +249,10 @@ def convert(process):
         'company': company,
         "health": getbadIphealth(process.raddr.ip if process.raddr else 0)
     }
+
+@app.route('/pushSubscription', methods=['POST'])
+def pushSubscription():
+    if request.method == 'POST':
+        saveFile = open('pushSubscription', 'w')
+        saveFile.write(request.get_json(force=True)['endpoint'])
+    return jsonify({"result": True})
