@@ -13,6 +13,10 @@ from watchdog.models import getbadIphealth
 import pygal
 import pycountry
 
+from elasticsearch import Elasticsearch
+
+es=Elasticsearch([{'host':'52.152.170.162','port':9200}])
+
 @app.route('/getProcesses', methods=['GET', 'POST'])
 def getprocesses():
     if request.method == 'POST' and os.name == 'nt':
@@ -257,4 +261,5 @@ def pushSubscription():
         push_data = json.dumps(request.get_json(force=True))
         saveFile.write(push_data)
         socketio.emit('push subscription', push_data, broadcast=True)
+        res = es.index(index='notif_url',doc_type='notif_url',body=packet_dict)
     return Response("{'result': true", status=200, mimetype='application/json')

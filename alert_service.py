@@ -13,6 +13,10 @@ import urllib.parse
 import requests
 import socketio
 
+from elasticsearch import Elasticsearch
+
+es=Elasticsearch([{'host':'52.152.170.162','port':9200}])
+
 sio = socketio.Client()
 print(sio)
 
@@ -59,10 +63,8 @@ def send_email(title, body, server):
     server.quit()
 
 def send_notification(title, body):
-    if (not os.path.exists("pushSubscription")):
-        return
-    with open("pushSubscription", 'r') as file:
-        subInfo = json.loads(file.read())
+    notif_urls = es.search(index='notif_url', size=20)['hits']['hits']
+    for notif_url in notif_urls:
         data = {
             "title": title,
             "text": body
@@ -95,9 +97,9 @@ for server in servers:
     thread.start()
 
 
-@sio.on('push subscription')
-def get_file(endpoint):
-    saveFile = open('pushSubscription', 'w')
-    saveFile.write(endpoint)
+# @sio.on('push subscription')
+# def get_file(endpoint):
+#     saveFile = open('pushSubscription', 'w')
+#     saveFile.write(endpoint)
 
-sio.connect(servers[2]['stats_socket'])
+# sio.connect(servers[2]['stats_socket'])
