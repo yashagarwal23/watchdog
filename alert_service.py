@@ -63,13 +63,14 @@ def send_email(title, body, server):
     server.quit()
 
 def send_notification(title, body):
+    print("send notification")
     notif_urls = es.search(index='notif_url', size=20)['hits']['hits']
     for notif_url in notif_urls:
         data = {
             "title": title,
             "text": body
         }
-        webpush(notif_url['_source']['endpoint'], json.dumps(data))
+        webpush(notif_url['_source'], json.dumps(data))
 
 def check_server(server):
     print("thread started")
@@ -86,6 +87,7 @@ def check_server(server):
             print("server down : ", server)
             send_email("Server Down", server_shut_down_message, server)
             resp =  sendSMS(server)
+            send_notification("Server Down", "server is down")
             print(resp)
             message = "server {}, IP : {} is down".format(server['name'], server['IP'])
             exit(0)
@@ -95,11 +97,3 @@ print(servers)
 for server in servers:
     thread = threading.Thread(target=check_server, args=(server,))
     thread.start()
-
-
-# @sio.on('push subscription')
-# def get_file(endpoint):
-#     saveFile = open('pushSubscription', 'w')
-#     saveFile.write(endpoint)
-
-# sio.connect(servers[2]['stats_socket'])
