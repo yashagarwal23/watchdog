@@ -36,6 +36,7 @@ python-dateutil==2.8.1
 python-engineio==3.11.2
 python-socketio==4.5.1
 pytz==2018.9
+pywebpush=1.11.0
 requests==2.21.0
 scapy==2.4.3
 six==1.12.0

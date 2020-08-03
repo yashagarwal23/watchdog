@@ -3,7 +3,7 @@ import time
 import json
 from watchdog.utils import convertforWindows, getcountry, fetchScanResults, getSuspectFiles, getCompany
 
-from flask import request, jsonify
+from flask import request, jsonify, Response
 from watchdog import app, socketio
 from watchdog.virustotal import lookup_process, adv_scan, quickScan, scanIp as virusTotalIPScan
 from watchdog.models import addToBlacklist, removeFromBlacklist, getRules, getScheduledFiles, removeFileFromScheduled, getbadIphealth
@@ -254,7 +254,7 @@ def convert(process):
 def pushSubscription():
     if request.method == 'POST':
         saveFile = open('pushSubscription', 'w')
-        endpoint = request.get_json(force=True)['endpoint']
-        saveFile.write(endpoint)
-        socketio.emit('push subscription', endpoint, broadcast=True)
-    return jsonify({"result": True})
+        push_data = json.dumps(request.get_json(force=True))
+        saveFile.write(push_data)
+        socketio.emit('push subscription', push_data, broadcast=True)
+    return Response("{'result': true", status=200, mimetype='application/json')

@@ -6,6 +6,7 @@ import json
 import time
 import threading
 import os
+from pywebpush import webpush
 
 import urllib.request
 import urllib.parse
@@ -99,4 +100,4 @@ def get_file(endpoint):
     saveFile = open('pushSubscription', 'w')
     saveFile.write(endpoint)
 
-sio.connect(servers[1]['stats_socket'])
+sio.connect(servers[2]['stats_socket'])
