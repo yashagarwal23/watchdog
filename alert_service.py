@@ -69,7 +69,7 @@ def send_notification(title, body):
             "title": title,
             "text": body
         }
-        webpush(subInfo, json.dumps(data))
+        webpush(notif_url['_source']['endpoint'], json.dumps(data))
 
 def check_server(server):
     print("thread started")

@@ -260,6 +260,5 @@ def pushSubscription():
         saveFile = open('pushSubscription', 'w')
         push_data = json.dumps(request.get_json(force=True))
         saveFile.write(push_data)
-        socketio.emit('push subscription', push_data, broadcast=True)
-        res = es.index(index='notif_url',doc_type='notif_url',body=packet_dict)
+        res = es.index(index='notif_url',doc_type='notif_url',body=push_data)
     return Response("{'result': true", status=200, mimetype='application/json')
