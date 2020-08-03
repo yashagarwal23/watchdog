@@ -1,5 +1,5 @@
 APScheduler==3.5.3
-backports.functools-lru-cache==1.6.1
+backcall==0.2.0
 certifi==2020.6.20
 cffi==1.14.0
 chardet==3.0.4
@@ -8,8 +8,10 @@ colorama==0.4.3
 cryptography==2.9.2
 cycler==0.10.0
 decorator==4.4.2
+elasticsearch==7.8.1
 Flask==1.0.2
 Flask-Cors==3.0.8
+Flask-SocketIO==4.3.1
 Flask-SQLAlchemy==2.3.2
 geoip2==2.9.0
 greenlet==0.4.16
@@ -25,8 +27,10 @@ mkl-random==1.1.1
 mkl-service==2.3.0
 numpy==1.16.2
 olefile==0.46
-pickleshare==0.7.5
+parso==0.7.0
+prompt-toolkit==3.0.5
 psutil==5.6.1
+ptyprocess==0.6.0
 pycountry==18.12.8
 pygal==2.4.0
 pygal-maps-world==1.0.2
@@ -34,9 +38,9 @@ Pygments==2.6.1
 pyparsing==2.4.7
 python-dateutil==2.8.1
 python-engineio==3.11.2
+python-iptables==0.13.0
 python-socketio==4.5.1
 pytz==2018.9
-pywebpush=1.11.0
 requests==2.21.0
 scapy==2.4.3
 six==1.12.0
@@ -46,7 +50,5 @@ traitlets==4.3.3
 tzlocal==1.5.1
 urllib3==1.24.1
 Werkzeug==0.14.1
-win-inet-pton==1.1.0
-wincertstore==0.2
 zope.event==4.4
 zope.interface==5.1.0
