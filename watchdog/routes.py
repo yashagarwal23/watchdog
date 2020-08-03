@@ -69,10 +69,8 @@ def getProcessUsageStats():
         process = psutil.Process(pid=pid)
         return jsonify(
             {
-                "cpu_usage": process.cpu_percent(interval=1)/psutil.cpu_count(),
+                "cpu_usage": process.cpu_percent(interval=1),
                 "memory_usage": str(int(process.memory_info().rss) / ( 1024 * 1024 ))+ " MB" ,
-                # "disk_io_percent": [(100.0 * n_c[i + 1]) / (n_c[i] if n_c[i] != 0 else 1) for i in range(0, len(n_c) - 1, 2)],
-                # "network_io_percent": ""
                 "user": process.username(),
                 "num_threads": process.num_threads(),
                 "create_time": process.create_time()
@@ -256,5 +254,7 @@ def convert(process):
 def pushSubscription():
     if request.method == 'POST':
         saveFile = open('pushSubscription', 'w')
-        saveFile.write(request.get_json(force=True)['endpoint'])
+        endpoint = request.get_json(force=True)['endpoint']
+        saveFile.write(endpoint)
+        socketio.emit('push subscription', endpoint, broadcast=True)
     return jsonify({"result": True})
